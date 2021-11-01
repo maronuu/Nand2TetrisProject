@@ -17,4 +17,15 @@ CHIP PC {
 
     PARTS:
     // Put your code here:
+    
+    // load from register or not
+    Or(a=load, b=reset, out=LorR);
+    Or(a=LorR, b=inc, out=regload);
+    
+    Inc16(in=regout, out=incout);   // out(t-1) + 1
+    Mux16(a=regout, b=incout, sel=inc, out=o1); // select out(t-1) or out(t-1) + 1
+    Mux16(a=o1, b=in, sel=load, out=o2);    // select o1 or in(t-1)
+    Mux16(a=o2, b=false, sel=reset, out=regin); // select o2 or 0
+    
+    Register(in=regin, load=regload, out=regout, out=out);  // out := REG(regin)
 }
