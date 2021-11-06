@@ -28,4 +28,22 @@ CHIP Memory {
 
     PARTS:
     // Put your code here:
+    // addr > 0x6000 = 01100000 00000000  ineffect
+    // addr == 0x6000 = 01100000 00000000 keyboard
+    // addr < 0x6000
+        // 0x4000 <= addr < 0x6000 (01000000 00000000 <= addr < 01100000 00000000)
+        // addr < 0x4000 (addr < 01000000 00000000)
+    DMux(in=load, sel=address[14], a=rload, b=sorkload);
+    DMux(in=sorkload, sel=address[13], a=sload, b=kload);
+    
+    // RAM16K
+    RAM16K(in=in, load=rload, address=address[0..13], out=rout);
+    // SCREEN
+    Screen(in=in, load=sload, address=address[0..12], out=sout);
+    // Keyboard
+    Keyboard(out=kout);
+    
+    // out
+    Mux16(a=sout, b=kout, sel=address[13], out=sorkout);
+    Mux16(a=rout, b=sorkout, sel=address[14], out=out);
 }
